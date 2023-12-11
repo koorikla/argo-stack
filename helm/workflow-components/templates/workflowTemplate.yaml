@@ -10,7 +10,7 @@ spec:
       args:
         - --dockerfile=/workspace/Dockerfile
         - --context=dir:///workspace
-        - --destination=localhost:5000/my-image:latest
+        - --destination=localhost:5001/my-image:latest
         - --insecure
       volumeMounts:
         - name: dockerfile

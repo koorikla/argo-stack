@@ -3,11 +3,53 @@
 # Exit on any error
 set -e
 
+
+
+# Test pushing images via Kaniko to local docker registry, wip
+
+# # Name of the registry container
+# REGISTRY_CONTAINER_NAME="kind-registry"
+
+# # Check if the registry container already exists
+# if docker container inspect $REGISTRY_CONTAINER_NAME > /dev/null 2>&1; then
+#     echo "Container $REGISTRY_CONTAINER_NAME already exists."
+
+#     # Check if the container is not running
+#     if [ "$(docker inspect -f '{{.State.Running}}' $REGISTRY_CONTAINER_NAME)" == "false" ]; then
+#         echo "Starting the existing container $REGISTRY_CONTAINER_NAME."
+#         docker start $REGISTRY_CONTAINER_NAME
+#     else
+#         echo "Container $REGISTRY_CONTAINER_NAME is already running."
+#     fi
+# else
+#     # Run the registry container
+#     echo "Running a new registry container $REGISTRY_CONTAINER_NAME."
+#     docker run -d -p 5001:5000 --name $REGISTRY_CONTAINER_NAME --restart=always registry:2
+# fi
+
+# # Get the network of your kind cluster
+# KIND_CLUSTER_NAME="kind"  # Change if you have a different cluster name
+# KIND_NETWORK=$(docker network ls -f name="^${KIND_CLUSTER_NAME}$" -q)
+
+# # Check if the registry is already connected to the kind network
+# if ! docker network inspect "${KIND_NETWORK}" --format '{{json .Containers}}' | grep -q "${REGISTRY_CONTAINER_NAME}"; then
+#     echo "Connecting the registry container to the kind network."
+#     docker network connect "${KIND_NETWORK}" $REGISTRY_CONTAINER_NAME
+# else
+#     echo "Registry container is already connected to the kind network."
+# fi
+
+
+
 # Create a Kind cluster
 create_kind_cluster() {
     cat <<EOF | kind create cluster --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+# containerdConfigPatches:
+# - |-
+#   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5001"]
+#     endpoint = ["http://kind-registry:5001"]
 nodes:
 - role: control-plane
   kubeadmConfigPatches:
