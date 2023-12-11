@@ -1,7 +1,10 @@
+{{- if .Values.argoEvents.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: EventBus
 metadata:
   name: default
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
 spec:
   nats:
     native:
@@ -22,3 +25,4 @@ spec:
 #        storageClassName: standard
 #        accessMode: ReadWriteOnce
 #        volumeSize: 10Gi
+{{- end }}

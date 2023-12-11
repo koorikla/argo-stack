@@ -6,9 +6,12 @@ dependencies:
   - name: argo-cd
     version: "5.51.x"
     repository: "https://argoproj.github.io/argo-helm"
+    condition: argo-cd.enabled
   - name: argo-workflows
     version: "0.39.x"
     repository: "https://argoproj.github.io/argo-helm"
+    condition: argo-workflows.enabled
   - name: argo-events
     version: "2.4.x"
     repository: "https://argoproj.github.io/argo-helm"
+    condition: argo-events.enabled

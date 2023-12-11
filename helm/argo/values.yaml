@@ -1,4 +1,5 @@
 argo-cd:
+  enabled: true
   fullnameOverride: argo-cd
   server:
     ingress:
@@ -14,6 +15,7 @@ argo-cd:
 
 
 argo-workflows:
+  enabled: true
   fullnameOverride: argo-workflows
   authModes: ["server"]
   server:
@@ -31,4 +33,5 @@ argo-workflows:
 
 
 argo-events:
+  enabled: true
   fullnameOverride: argo-events
