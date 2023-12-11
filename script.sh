@@ -49,8 +49,8 @@ wait_for_pods_ready() {
             echo "Waiting for pods in namespace '$namespace' to be ready..."
             sleep $interval
         else
+            echo "Pods in namespace '$namespace' are ready, sleeping 10s to be extra sure. :)"
             sleep 10
-            echo "Pods in namespace '$namespace' are ready."
             return
         fi
     done
@@ -58,8 +58,8 @@ wait_for_pods_ready() {
 
 
 get_argocd_admin_password() {
-    local max_attempts=5
-    local retry_interval=10 # seconds
+    local max_attempts=50
+    local retry_interval=3 # seconds
 
     for attempt in $(seq 1 $max_attempts); do
         echo "Attempt $attempt of $max_attempts: Retrieving Argo CD admin password..."
@@ -88,7 +88,6 @@ initialize() {
     kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
     helm repo add argo https://argoproj.github.io/argo-helm
     wait_for_pods_ready "ingress-nginx" "app.kubernetes.io/component=controller"
-    echo "sleeping 10 sec to ensure the ingress controller's wbhook is ready"
 }
 
 # Install Custom Argo Chart
@@ -106,7 +105,7 @@ create_kind_cluster
 echo "Initializing ..."
 initialize
 
-echo "Installing Custom Argo Chart..."
+echo "Installing Argo Umbrella Chart..."
 install_custom_argo_chart
 
 
