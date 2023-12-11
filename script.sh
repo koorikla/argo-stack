@@ -94,7 +94,7 @@ initialize() {
 
 # Install Argo umbrella Chart and app-of-apps to make it maintain itself in a GitOps manner
 install_custom_argo_chart() {
-    # Assuming my-argo-chart is in the current directory
+    sleep 10
     helm dependency update helm/argo
     helm upgrade --install argo helm/argo -n argo --create-namespace
     wait_for_pods_ready "argo" ""

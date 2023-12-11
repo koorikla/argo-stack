@@ -91,7 +91,17 @@ argocd-apps:
   # -- Deploy Argo CD Projects within this helm release
   # @default -- `[]` (See [values.yaml])
   ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/
-  projects: []
+  projects:
+  - name: infra
+    namespace: argocd
+    finalizers:
+    description: Infra Project
+    sourceRepos:
+    - '*'
+    destinations:
+    - '*'
+
+
   # - name: guestbook
   #   namespace: argocd
   #   additionalLabels: {}
