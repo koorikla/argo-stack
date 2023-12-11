@@ -1,6 +1,6 @@
 argocd-apps:
   applications:
-# Argo can manage argo itself, disaster recovery is to revert and run helm update --install again
+# Argo can manage argo itself, thanks to its stateless nature we always have backwards compatability with helm disaster recovery is to fix and run helm upgrade --install argo helm/argo -n argo
   - name: argo
     namespace: argo
     project: infra
