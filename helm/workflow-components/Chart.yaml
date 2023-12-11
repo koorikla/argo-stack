@@ -1,0 +1,4 @@
+apiVersion: v2
+name: workflows
+description:  Initial chart to contain Argo workflows
+version: 0.1.0

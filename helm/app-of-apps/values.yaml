@@ -30,6 +30,19 @@ argocd-apps:
       namespace: argo
 
 
+
+  - name: workflow-components
+    namespace: argo
+    project: infra
+    sources:
+     - repoURL: https://github.com/koorikla/argo-stack
+       path: helm/workflow-components
+       targetRevision: main
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: argo
+
+
   projects:
   - name: infra
     namespace: argo

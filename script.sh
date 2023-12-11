@@ -99,6 +99,7 @@ install_custom_argo_chart() {
     helm upgrade --install argo helm/argo -n argo --create-namespace
     wait_for_pods_ready "argo" ""
     echo "Installing app-of-apps chart to maintain things in a GitOps manner from this point."
+    helm dependency update helm/app-of-apps
     helm upgrade --install app-of-apps helm/app-of-apps -n argo
 }
 

@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: kaniko-build-template
+spec:
+  templates:
+  - name: build-and-push-image
+    container:
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - --dockerfile=/workspace/Dockerfile
+        - --context=dir:///workspace
+        - --destination=localhost:5000/my-image:latest
+        - --insecure
+      volumeMounts:
+        - name: dockerfile
+          mountPath: /workspace
+  volumes:
+  - name: dockerfile
+    configMap:
+      name: dockerfile-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dockerfile-config
+data:
+  Dockerfile: |
+    # Your Dockerfile contents here
+    FROM alpine
+    RUN echo "Hello from Kaniko"
+
+ ---
+
+# # Example delcarative trigger for the workflowTemplate
+
+# apiVersion: argoproj.io/v1alpha1
+# kind: Workflow
+# metadata:
+#   generateName: kaniko-build-
+# spec:
+#   entrypoint: build-and-push-image
+#   templates:
+#   - name: build-and-push-image
+#     templateRef:
+#       name: kaniko-build-template
+#       template: build-and-push-image
