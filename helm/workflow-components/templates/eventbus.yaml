@@ -3,8 +3,8 @@ apiVersion: argoproj.io/v1alpha1
 kind: EventBus
 metadata:
   name: default
-  annotations:
-    argocd.argoproj.io/sync-wave: "10"
+  # annotations:
+  #   argocd.argoproj.io/sync-wave: "10"
 spec:
   nats:
     native:
