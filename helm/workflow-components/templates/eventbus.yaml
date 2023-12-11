@@ -1,4 +1,4 @@
-{{- if .Values.argoEvents.enabled }}
+
 apiVersion: argoproj.io/v1alpha1
 kind: EventBus
 metadata:
@@ -25,4 +25,3 @@ spec:
 #        storageClassName: standard
 #        accessMode: ReadWriteOnce
 #        volumeSize: 10Gi
-{{- end }}
