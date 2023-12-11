@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  labels:
+    example: "true"
+  name: calendar
+  namespace: argo
+spec:
+  calendar:
+    example-with-interval:
+      interval: 10s
+      schedule: ""

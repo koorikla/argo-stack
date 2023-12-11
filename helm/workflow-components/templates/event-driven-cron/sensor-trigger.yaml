@@ -1,0 +1,34 @@
+# See flow under argo namespace http://argo-workflows.local/event-flow/argo?showWorkflows=true
+
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  labels:
+    example: "true"
+  name: workflow
+  namespace: argo
+spec:
+  dependencies:
+  - eventName: example-with-interval
+    eventSourceName: calendar
+    name: dependency-1
+  loggingFields: null
+  triggers:
+  - template:
+      k8s:
+        operation: create
+        source:
+          resource:
+            apiVersion: argoproj.io/v1alpha1
+            kind: Workflow
+            metadata:
+              generateName: workflow-from-sensor-
+            spec:
+              entrypoint: main
+              templates:
+              - container:
+                  image: argoproj/argosay:v2
+                name: main
+      name: workflow-trigger-1
+  - template:
+      name: log-1

@@ -1,4 +1,4 @@
-
+## Should i provision it with argo or are these namespace scoped?
 apiVersion: argoproj.io/v1alpha1
 kind: EventBus
 metadata:
