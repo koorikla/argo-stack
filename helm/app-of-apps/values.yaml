@@ -12,7 +12,7 @@ argocd-apps:
     #  - chart: elasticsearch
     #    repoURL: https://helm.elastic.co
     #    targetRevision: 8.5.1
-     - repoURL: https://github.com/koorikla/argo-stack/tree/main
+     - repoURL: https://github.com/koorikla/argo-stack
        path: helm/argo
        targetRevision: main
     destination:
@@ -34,7 +34,7 @@ argocd-apps:
     #  - chart: elasticsearch
     #    repoURL: https://helm.elastic.co
     #    targetRevision: 8.5.1
-     - repoURL: https://github.com/koorikla/argo-stack/tree/main
+     - repoURL: https://github.com/koorikla/argo-stack
        path: helm/app-of-apps
        targetRevision: main
     destination:
@@ -44,8 +44,7 @@ argocd-apps:
       automated:
         prune: false
         selfHeal: false
-      syncOptions:
-      - CreateNamespace=true
+
 
 
 

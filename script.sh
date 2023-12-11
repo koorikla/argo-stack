@@ -30,23 +30,24 @@ EOF
     wait_for_pods_ready "kube-system" ""
 }
 
-# Wait for pods in specified namespaces to be running
+# Wait for pods in specified namespaces to be running and ready (1/1 Ready)
 wait_for_pods_ready() {
     local namespace=$1
     local label_selector=$2
     local timeout=${3:-300} # Default timeout 300 seconds
     local interval=${4:-5}  # Default interval 5 seconds
 
-    echo "Waiting for pods in namespace '$namespace' to be ready..."
+    echo "Waiting for pods in namespace '$namespace' to be 1/1 Ready..."
     local end_time=$(( $(date +%s) + timeout ))
     while true; do
-        if ! kubectl get pods -n "$namespace" --selector="$label_selector" | grep -q 'Running'; then
+        # Check if all pods are 1/1 Ready
+        if ! kubectl get pods -n "$namespace" --selector="$label_selector" | awk '{print $2}' | grep -v "1/1" | grep -v "READY"; then
             current_time=$(date +%s)
             if [[ $current_time -gt $end_time ]]; then
-                echo "Timeout waiting for pods in namespace '$namespace' to be ready."
+                echo "Timeout waiting for pods in namespace '$namespace' to be 1/1 Ready."
                 exit 1
             fi
-            echo "Waiting for pods in namespace '$namespace' to be ready..."
+            echo "Waiting for pods in namespace '$namespace' to be 1/1 Ready..."
             sleep $interval
         else
             echo "Pods in namespace '$namespace' are ready, sleeping 10s to be extra sure. :)"
@@ -124,7 +125,7 @@ echo "127.0.0.1       argo-workflows.local"
 echo "----------------------------------------------------"
 
 
-echo "open http://argocd.local or http://argo-workflows.local"
+echo "open https://argocd.local or http://argo-workflows.local"
 
 
 echo "Retrieving Argo CD admin password..."
