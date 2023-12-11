@@ -3,13 +3,14 @@ argo-cd:
   server:
     ingress:
       enabled: true
-      annotations:
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-        alb.ingress.kubernetes.io/ssl-passthrough: "true"
-        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      # annotations:
+      #   nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      #   alb.ingress.kubernetes.io/ssl-passthrough: "true"
+      #   nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       ingressClassName: "nginx"
       hosts:
         - argocd.local
+      https: false
 
 
 argo-workflows:
