@@ -1,0 +1,14 @@
+apiVersion: v2
+name: my-argo-chart
+description: A Helm chart for Argo CD, Argo Workflows, and Argo Events
+version: 0.1.0
+dependencies:
+  - name: argo-cd
+    version: "5.51.6"
+    repository: "https://argoproj.github.io/argo-helm"
+  - name: argo-workflows
+    version: "0.39.8"
+    repository: "https://argoproj.github.io/argo-helm"
+  - name: argo-events
+    version: "2.4.1"
+    repository: "https://argoproj.github.io/argo-helm"
