@@ -101,6 +101,10 @@ argocd-apps:
     destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc
+    clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
 
   # - name: guestbook
   #   namespace: argocd
