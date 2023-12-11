@@ -30,7 +30,7 @@ data:
     FROM alpine
     RUN echo "Hello from Kaniko"
 
- ---
+
 
 # # Example delcarative trigger for the workflowTemplate
 
