@@ -9,41 +9,35 @@ argocd-apps:
     namespace: argo
     project: infra
     sources:
-    #  - chart: elasticsearch
-    #    repoURL: https://helm.elastic.co
-    #    targetRevision: 8.5.1
      - repoURL: https://github.com/koorikla/argo-stack
        path: helm/argo
        targetRevision: main
     destination:
       server: https://kubernetes.default.svc
       namespace: argo
-    syncPolicy:
-      automated:
-        prune: false
-        selfHeal: false
-      syncOptions:
-      - CreateNamespace=true
+    # syncPolicy:
+    #   automated:
+    #     prune: false
+    #     selfHeal: false
+    #   syncOptions:
+    #   - CreateNamespace=true
 
-# Chart to manage applications, project etc (this chart)
+# Chart to manage Argo itself applications, project etc (this chart)
 
   - name: app-of-apps
     namespace: argo
     project: infra
     sources:
-    #  - chart: elasticsearch
-    #    repoURL: https://helm.elastic.co
-    #    targetRevision: 8.5.1
      - repoURL: https://github.com/koorikla/argo-stack
        path: helm/app-of-apps
        targetRevision: main
     destination:
       server: https://kubernetes.default.svc
       namespace: argo
-    syncPolicy:
-      automated:
-        prune: false
-        selfHeal: false
+    # syncPolicy:
+    #   automated:
+    #     prune: false
+    #     selfHeal: false
 
 
 
