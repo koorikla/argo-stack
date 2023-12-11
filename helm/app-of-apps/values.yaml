@@ -99,8 +99,8 @@ argocd-apps:
     sourceRepos:
     - '*'
     destinations:
-    - '*'
-
+    - namespace: '*'
+      server: https://kubernetes.default.svc
 
   # - name: guestbook
   #   namespace: argocd
