@@ -93,7 +93,7 @@ argocd-apps:
   ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/
   projects:
   - name: infra
-    namespace: argocd
+    namespace: argo
     finalizers:
     description: Infra Project
     sourceRepos:
