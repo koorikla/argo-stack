@@ -1,6 +1,6 @@
 apiVersion: v2
 name: app-of-apps
-description: For managing argo apps with argo-cd
+description: Chart to manage Argo Internals
 version: 0.1.0
 dependencies:
   - name: argocd-apps

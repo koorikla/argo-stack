@@ -6,7 +6,7 @@ argo-cd:
       annotations:
         nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         alb.ingress.kubernetes.io/ssl-passthrough: "true"
-        # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
       ingressClassName: "nginx"
       hosts:
         - argocd.local
@@ -15,11 +15,9 @@ argo-cd:
 argo-workflows:
   fullnameOverride: argo-workflows
   authModes: ["server"]
-
   server:
     extraArgs:
     - --auth-mode=server
-
     ingress:
       enabled: true
       annotations:
