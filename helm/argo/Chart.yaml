@@ -4,11 +4,11 @@ description: A Helm chart for Argo CD, Argo Workflows, and Argo Events
 version: 0.1.0
 dependencies:
   - name: argo-cd
-    version: "5.51.6"
+    version: "5.51.x"
     repository: "https://argoproj.github.io/argo-helm"
   - name: argo-workflows
-    version: "0.39.8"
+    version: "0.39.x"
     repository: "https://argoproj.github.io/argo-helm"
   - name: argo-events
-    version: "2.4.1"
+    version: "2.4.x"
     repository: "https://argoproj.github.io/argo-helm"
