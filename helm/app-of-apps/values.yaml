@@ -3,6 +3,30 @@ argocd-apps:
   # @default -- `[]` (See [values.yaml])
   ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/
   applications:
+
+# Argo can manage argo itself, disaster recovery is to revert and run helm update --install again
+  - name: argo
+    namespace: argo
+    project: infra
+    sources:
+    #  - chart: elasticsearch
+    #    repoURL: https://helm.elastic.co
+    #    targetRevision: 8.5.1
+     - repoURL: https://github.com/koorikla/argo-stack/tree/main
+       path: helm/argo
+       targetRevision: main
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: argo
+    syncPolicy:
+      automated:
+        prune: false
+        selfHeal: false
+      syncOptions:
+      - CreateNamespace=true
+
+# Chart to manage applications, project etc (this chart)
+
   - name: app-of-apps
     namespace: argo
     project: infra
@@ -12,7 +36,7 @@ argocd-apps:
     #    targetRevision: 8.5.1
      - repoURL: https://github.com/koorikla/argo-stack/tree/main
        path: helm/app-of-apps
-       targetRevision: HEAD
+       targetRevision: main
     destination:
       server: https://kubernetes.default.svc
       namespace: argo

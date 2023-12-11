@@ -88,14 +88,17 @@ initialize() {
     kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
     helm repo add argo https://argoproj.github.io/argo-helm
     wait_for_pods_ready "ingress-nginx" "app.kubernetes.io/component=controller"
+    
 }
 
-# Install Custom Argo Chart
+# Install Argo umbrella Chart and app-of-apps to make it maintain itself in a GitOps manner
 install_custom_argo_chart() {
     # Assuming my-argo-chart is in the current directory
     helm dependency update helm/argo
     helm upgrade --install argo helm/argo -n argo --create-namespace
     wait_for_pods_ready "argo" ""
+    echo "Installing app-of-apps chart to maintain things in a GitOps manner from this point."
+    helm upgrade --install app-of-apps helm/app-of-apps -n argo
 }
 
 
@@ -109,7 +112,7 @@ echo "Installing Argo Umbrella Chart..."
 install_custom_argo_chart
 
 
-
+echo "####################################################"
 echo "----------------------------------------------------"
 echo "Setup complete. Argo CD, Argo Workflows, and Argo Events have been installed on your local Kind cluster."
 
@@ -121,7 +124,8 @@ echo "127.0.0.1       argo-workflows.local"
 echo "----------------------------------------------------"
 
 
-echo "open http://argocd-server.local or http://argo-workflows.local, login with admin and password:"
+echo "open http://argocd.local or http://argo-workflows.local"
+
 
 echo "Retrieving Argo CD admin password..."
 get_argocd_admin_password
