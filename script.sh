@@ -3,42 +3,39 @@
 # Exit on any error
 set -e
 
+# Define your cluster name
+CLUSTER_NAME="kind"
 
+# Function to check if the cluster exists
+cluster_exists() {
+    kind get clusters | grep -q "^$CLUSTER_NAME\$"
+}
 
-# Test pushing images via Kaniko to local docker registry, wip
+# Function to prompt for cluster deletion
+prompt_delete_cluster() {
+    read -p "Do you want to delete the existing cluster $CLUSTER_NAME? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        kind delete cluster --name "$CLUSTER_NAME"
+        return 0
+    else
+        echo "Cluster deletion aborted."
+        return 1
+    fi
+}
 
-# # Name of the registry container
-# REGISTRY_CONTAINER_NAME="kind-registry"
+# Check if the cluster is running
+if cluster_exists; then
+    echo "Cluster $CLUSTER_NAME already exists."
 
-# # Check if the registry container already exists
-# if docker container inspect $REGISTRY_CONTAINER_NAME > /dev/null 2>&1; then
-#     echo "Container $REGISTRY_CONTAINER_NAME already exists."
-
-#     # Check if the container is not running
-#     if [ "$(docker inspect -f '{{.State.Running}}' $REGISTRY_CONTAINER_NAME)" == "false" ]; then
-#         echo "Starting the existing container $REGISTRY_CONTAINER_NAME."
-#         docker start $REGISTRY_CONTAINER_NAME
-#     else
-#         echo "Container $REGISTRY_CONTAINER_NAME is already running."
-#     fi
-# else
-#     # Run the registry container
-#     echo "Running a new registry container $REGISTRY_CONTAINER_NAME."
-#     docker run -d -p 5001:5000 --name $REGISTRY_CONTAINER_NAME --restart=always registry:2
-# fi
-
-# # Get the network of your kind cluster
-# KIND_CLUSTER_NAME="kind"  # Change if you have a different cluster name
-# KIND_NETWORK=$(docker network ls -f name="^${KIND_CLUSTER_NAME}$" -q)
-
-# # Check if the registry is already connected to the kind network
-# if ! docker network inspect "${KIND_NETWORK}" --format '{{json .Containers}}' | grep -q "${REGISTRY_CONTAINER_NAME}"; then
-#     echo "Connecting the registry container to the kind network."
-#     docker network connect "${KIND_NETWORK}" $REGISTRY_CONTAINER_NAME
-# else
-#     echo "Registry container is already connected to the kind network."
-# fi
-
+    # Prompt the user for a decision to delete the cluster
+    if prompt_delete_cluster; then
+        # Try creating the cluster again if the deletion was successful
+        echo "Cluster $CLUSTER_NAME has been deleted."
+    fi
+else
+    echo "Creating Kind cluster..."
+fi
 
 
 # Create a Kind cluster
@@ -128,7 +125,7 @@ get_argocd_admin_password() {
 
 # Initialize add nginx ingress controller for kind and helm repo
 initialize() {
-    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml --wait
     helm repo add argo https://argoproj.github.io/argo-helm
     wait_for_pods_ready "ingress-nginx" "app.kubernetes.io/component=controller"
     
@@ -138,11 +135,11 @@ initialize() {
 install_custom_argo_chart() {
     sleep 10
     helm dependency update helm/argo
-    helm upgrade --install argo helm/argo -n argo --create-namespace
+    helm upgrade --install argo helm/argo -n argo --create-namespace --wait
     wait_for_pods_ready "argo" ""
     echo "Installing app-of-apps chart to maintain things in a GitOps manner from this point."
     helm dependency update helm/app-of-apps
-    helm upgrade --install app-of-apps helm/app-of-apps -n argo
+    helm upgrade --install app-of-apps helm/app-of-apps -n argo --wait
 }
 
 
@@ -161,21 +158,37 @@ echo "----------------------------------------------------"
 echo "Setup complete. Argo CD, Argo Workflows, and Argo Events have been installed on your local Kind cluster."
 
 
-echo "Add kind Argo ingress entrys to /etc/hosts file"
+echo "Adding kind ingress entrys to /etc/hosts file"
 echo "----------------------------------------------------"
-echo "127.0.0.1       argocd.local"
-echo "127.0.0.1       argo-workflows.local"
-echo "127.0.0.1       argo-rollouts.local"
-echo "127.0.0.1       rollouts-demo.local"
+# Define the entries to add
+entries=(
+    "127.0.0.1       argocd.local"
+    "127.0.0.1       argo-workflows.local"
+    "127.0.0.1       argo-rollouts.local"
+    "127.0.0.1       rollouts-demo.local"
+)
+
+# Function to add an entry if it doesn't exist
+add_if_not_exist() {
+    local entry=$1
+    if ! grep -qF -- "$entry" /etc/hosts; then
+        echo "$entry" | sudo tee -a /etc/hosts > /dev/null
+        echo "Added: $entry"
+    else
+        echo "Already exists: $entry"
+    fi
+}
+
+# Iterate over the entries and add them if they don't exist
+for entry in "${entries[@]}"; do
+    add_if_not_exist "$entry"
+done
 echo "----------------------------------------------------"
 
 
-echo "open https://argocd.local or http://argo-workflows.local"
+echo "open https://argocd.local or http://argo-workflows.local or http://argo-rollouts.local"
 
 
 echo "Retrieving Argo CD admin password..."
 get_argocd_admin_password
-
-
-# kind delete cluster --name kind
 

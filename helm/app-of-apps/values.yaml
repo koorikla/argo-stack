@@ -27,12 +27,15 @@ argocd-apps:
     destination:
       server: https://kubernetes.default.svc
       namespace: argo
-
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true
 
 
   - name: workflow-components
     namespace: argo
-    project: infra
+    project: demo
     sources:
      - repoURL: https://github.com/koorikla/argo-stack
        path: workflow-components
@@ -45,7 +48,7 @@ argocd-apps:
 
   - name: rollout-demo
     namespace: argo
-    project: infra
+    project: demo
     sources:
      - repoURL: https://github.com/koorikla/argo-stack
        path: rollout-demo
@@ -58,6 +61,19 @@ argocd-apps:
 
   projects:
   - name: infra
+    namespace: argo
+    finalizers:
+    description: Infra Project
+    sourceRepos:
+    - '*'
+    destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+    clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  - name: demo
     namespace: argo
     finalizers:
     description: Infra Project
