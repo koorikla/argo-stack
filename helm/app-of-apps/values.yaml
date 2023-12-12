@@ -37,11 +37,12 @@ argocd-apps:
      - repoURL: https://github.com/koorikla/argo-stack
        path: workflow-components
        targetRevision: main
+       directory:
+        recurse: true    
     destination:
       server: https://kubernetes.default.svc
       namespace: argo
-      directory:
-        recurse: true
+
 
   projects:
   - name: infra
