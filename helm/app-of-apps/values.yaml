@@ -38,11 +38,23 @@ argocd-apps:
        path: workflow-components
        targetRevision: main
        directory:
-        recurse: true    
+        recurse: true
     destination:
       server: https://kubernetes.default.svc
       namespace: argo
 
+  - name: rollout-demo
+    namespace: argo
+    project: infra
+    sources:
+     - repoURL: https://github.com/koorikla/argo-stack
+       path: rollout-demo
+       targetRevision: main
+       directory:
+        recurse: true
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: default
 
   projects:
   - name: infra

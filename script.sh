@@ -165,6 +165,8 @@ echo "Add kind Argo ingress entrys to /etc/hosts file"
 echo "----------------------------------------------------"
 echo "127.0.0.1       argocd.local"
 echo "127.0.0.1       argo-workflows.local"
+echo "127.0.0.1       argo-rollouts.local"
+echo "127.0.0.1       rollouts-demo.local"
 echo "----------------------------------------------------"
 
 
