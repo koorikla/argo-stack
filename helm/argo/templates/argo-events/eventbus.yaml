@@ -1,11 +1,12 @@
-{{- if .Values.argoEvents.enabled }}
+{{- if index .Values "argo-events" "enabled" }}
 ## Should i provision it with argo or are these namespace scoped?
 apiVersion: argoproj.io/v1alpha1
 kind: EventBus
 metadata:
   name: default
-  # annotations:
-  #   argocd.argoproj.io/sync-wave: "10"
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    helm.sh/hook: post-install
 spec:
   nats:
     native:
@@ -26,4 +27,4 @@ spec:
 #        storageClassName: standard
 #        accessMode: ReadWriteOnce
 #        volumeSize: 10Gi
-{{ end }}
+{{- end }}

@@ -1,4 +1,4 @@
-{{- range $dummy := list }}
+
 # apiVersion: argoproj.io/v1alpha1
 # kind: Workflow
 # metadata:
@@ -37,4 +37,3 @@
 #       image: your-processing-image
 #       command: [your-command]
 #       args: ["{{inputs.parameters.chunk}}"]
-{{- end }}
