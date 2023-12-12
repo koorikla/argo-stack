@@ -5,7 +5,6 @@ kind: EventBus
 metadata:
   name: default
   annotations:
-    argocd.argoproj.io/sync-wave: "10"
     helm.sh/hook: post-install
 spec:
   nats:
