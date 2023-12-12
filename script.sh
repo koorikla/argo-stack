@@ -138,7 +138,7 @@ install_custom_argo_chart() {
     helm upgrade --install argo helm/argo -n argo --set argocd-apps.enabled=false --create-namespace --wait 
     wait_for_pods_ready "argo" ""
     echo "Installing app-of-apps chart to maintain things in a GitOps manner from this point."
-    helm upgrade --install argo helm/argo -n argo -n argo --wait
+    helm upgrade --install argo helm/argo -n argo --set argocd-apps.enabled=true  --wait
 }
 
 
