@@ -126,6 +126,7 @@ get_argocd_admin_password() {
 # Initialize add nginx ingress controller for kind and helm repo
 initialize() {
     kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml --wait
+    sleep 10 # Ingress admissiond controllers take a while to start serving
     helm repo add argo https://argoproj.github.io/argo-helm
     wait_for_pods_ready "ingress-nginx" "app.kubernetes.io/component=controller"
     
