@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: kaniko-build-template
+spec:
+  entrypoint: build-and-push-image
+  arguments:
+    parameters:
+    - name: git-repo
+      value: "https://github.com/your/repo.git"  # Default Git repo URL
+    - name: image-destination
+      value: "localhost:5001/my-image:latest"  # Default image destination
+
+  templates:
+  - name: build-and-push-image
+    inputs:
+      parameters:
+      - name: git-repo
+      - name: image-destination
+
+    initContainers:
+    - name: git-clone
+      image: alpine/git
+      command: ["git", "clone", "{{inputs.parameters.git-repo}}", "/workspace"]
+      volumeMounts:
+      - name: workspace
+        mountPath: /workspace
+
+    container:
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - --dockerfile=/workspace/Dockerfile
+        - --context=dir:///workspace
+        - --destination="{{inputs.parameters.image-destination}}"
+        - --insecure
+      volumeMounts:
+      - name: workspace
+        mountPath: /workspace
+
+    volumes:
+    - name: workspace
+      emptyDir: {}
+
+
+
+
+# apiVersion: argoproj.io/v1alpha1
+# kind: Workflow
+# metadata:
+#   generateName: kaniko-build-
+# spec:
+#   entrypoint: build-and-push-image
+#   arguments:
+#     parameters:
+#     - name: git-repo
+#       value: "https://github.com/example-user/example-repo.git"
+#     - name: image-destination
+#       value: "myregistry.example.com/example-image:tag"
+#   workflowTemplateRef:
+#     name: kaniko-build-template

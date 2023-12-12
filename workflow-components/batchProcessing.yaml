@@ -1,0 +1,40 @@
+{{- range $dummy := list }}
+# apiVersion: argoproj.io/v1alpha1
+# kind: Workflow
+# metadata:
+#   generateName: process-excel-
+# spec:
+#   entrypoint: main
+#   templates:
+#   - name: main
+#     steps:
+#     - - name: read-excel
+#         template: read-excel
+
+#     - - name: process-chunk
+#         template: process-data
+#         arguments:
+#           parameters:
+#           - name: chunk
+#             value: "{{item}}"
+#         withParam: "{{steps.read-excel.outputs.result}}"
+
+#   - name: read-excel
+#     script:
+#       image: python:3.7
+#       command: [python]
+#       source: |
+#         import pandas as pd
+#         # Add your code to read from S3 and split data into chunks
+#         # Output the chunks as JSON
+#         print(chunks.to_json())
+
+#   - name: process-data
+#     inputs:
+#       parameters:
+#       - name: chunk
+#     container:
+#       image: your-processing-image
+#       command: [your-command]
+#       args: ["{{inputs.parameters.chunk}}"]
+{{- end }}

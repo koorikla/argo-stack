@@ -1,4 +1,0 @@
-apiVersion: v2
-name: workflows
-description:  Chart for maintaining argo workflow pipelines and triggers
-version: 0.1.0
