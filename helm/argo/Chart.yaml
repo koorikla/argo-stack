@@ -22,3 +22,8 @@ dependencies:
     version: "2.32.x"
     repository: "https://argoproj.github.io/argo-helm"
     condition: argo-rollouts.enabled
+
+  - name: argocd-apps
+    version: "1.4.x"
+    repository: "https://argoproj.github.io/argo-helm"
+    condition: argocd-apps.enabled
