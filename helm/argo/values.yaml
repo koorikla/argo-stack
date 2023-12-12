@@ -44,23 +44,9 @@ argo-rollouts:
     enabled: true
     ingress:
       enabled: true
-      annotations:
-        nginx.ingress.kubernetes.io/use-regex: "true"
-        # nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-        # alb.ingress.kubernetes.io/ssl-passthrough: "true"
-        # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
       ingressClassName: "nginx"
       hosts:
         - argo-rollouts.local
       pathType: ImplementationSpecific
       paths:
-        - /*
-
-    # extraPaths: 
-    #   - path: /*
-    #     pathType: Prefix
-    #     backend:
-    #       service:
-    #         name: ssl-redirect
-    #         port:
-    #           name: use-annotation
+        - /
