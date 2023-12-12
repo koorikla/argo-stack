@@ -35,3 +35,31 @@ argo-workflows:
 argo-events:
   enabled: true
   fullnameOverride: argo-events
+
+
+argo-rollouts:
+  enabled: true
+  fullnameOverride: argo-rollouts
+  dashboard:
+    enabled: true
+    ingress:
+      enabled: true
+      annotations:
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        # nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+        # alb.ingress.kubernetes.io/ssl-passthrough: "true"
+        # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+      ingressClassName: "nginx"
+      hosts:
+        - argo-rollouts.local
+      paths:
+        - /*
+
+    # extraPaths: 
+    #   - path: /*
+    #     pathType: Prefix
+    #     backend:
+    #       service:
+    #         name: ssl-redirect
+    #         port:
+    #           name: use-annotation

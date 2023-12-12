@@ -13,8 +13,8 @@ argocd-apps:
       namespace: argo
     syncPolicy:
       automated:
-        prune: false
-        selfHeal: false
+        prune: true
+        selfHeal: true
 
 # Chart to manage Argo Internals - applications, appsets, projects etc (this chart)
   - name: app-of-apps
