@@ -1,8 +1,0 @@
-apiVersion: v2
-name: app-of-apps
-description: Chart to manage Argo Internals
-version: 0.1.0
-dependencies:
-  - name: argocd-apps
-    version: "1.4.x"
-    repository: "https://argoproj.github.io/argo-helm"
