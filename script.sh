@@ -166,6 +166,7 @@ entries=(
     "127.0.0.1       argo-workflows.local"
     "127.0.0.1       argo-rollouts.local"
     "127.0.0.1       rollouts-demo.local"
+    "127.0.0.1       kargo.local"
 )
 
 # Function to add an entry if it doesn't exist

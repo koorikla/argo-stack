@@ -32,6 +32,20 @@ argocd-apps:
         syncOptions:
         - CreateNamespace=true
 
+    kargo:
+      namespace: argo
+      project: infra
+      sources:
+      - repoURL: https://github.com/koorikla/argo-stack
+        path: helm/kargo
+        targetRevision: main
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: kargo
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+
     workflow-components:
       namespace: argo
       project: demo

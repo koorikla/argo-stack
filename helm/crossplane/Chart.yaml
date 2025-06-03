@@ -1,6 +1,6 @@
 apiVersion: v2
-name: my-argo-chart
-description: A Helm chart for Argo CD, Argo Workflows, and Argo Events
+name: my-crossplane-umbrella-chart
+description: A Helm chart to deploy crossplane-core
 version: 0.1.0
 dependencies:
   - name: crossplane
