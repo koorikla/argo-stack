@@ -19,7 +19,7 @@ argocd-apps:
           selfHeal: true
 
     crossplane:
-      namespace: crossplane-system
+      namespace: argo
       project: infra
       sources:
       - repoURL: https://github.com/koorikla/argo-stack
@@ -27,7 +27,10 @@ argocd-apps:
         targetRevision: main
       destination:
         server: https://kubernetes.default.svc
-        namespace: argo
+        namespace: crossplane-system
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
 
     workflow-components:
       namespace: argo
