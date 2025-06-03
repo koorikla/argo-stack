@@ -3,7 +3,7 @@ argocd-apps:
   fullnameOverride: argocd-apps
   applications:
 # Argo can manage argo itself, thanks to its stateless nature we always have backwards compatability with helm disaster recovery is to fix and run helm upgrade --install argo helm/argo -n argo
-  - name: argo
+  argo:
     namespace: argo
     project: infra
     sources:
@@ -18,7 +18,7 @@ argocd-apps:
         prune: true
         selfHeal: true
 
-  - name: workflow-components
+  workflow-components:
     namespace: argo
     project: demo
     sources:
@@ -31,7 +31,7 @@ argocd-apps:
       server: https://kubernetes.default.svc
       namespace: argo
 
-  - name: rollout-demo
+  rollout-demo:
     namespace: argo
     project: demo
     sources:
@@ -45,7 +45,7 @@ argocd-apps:
       namespace: default
 
   projects:
-  - name: infra
+  infra:
     namespace: argo
     finalizers:
     description: Infra Project
@@ -58,7 +58,7 @@ argocd-apps:
     - group: '*'
       kind: '*'
 
-  - name: demo
+  demo:
     namespace: argo
     finalizers:
     description: Infra Project
