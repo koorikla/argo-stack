@@ -1,0 +1,8 @@
+apiVersion: v2
+name: my-argo-chart
+description: A Helm chart for Argo CD, Argo Workflows, and Argo Events
+version: 0.1.0
+dependencies:
+  - name: crossplane
+    version: "1.*.*"
+    repository: "https://charts.crossplane.io/stable"
