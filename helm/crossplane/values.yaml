@@ -1,9 +1,9 @@
 crossplane:
   function:
     packages:
-      - xpkg.upbound.io/upbound/function-go-templating:v0.9.0
+      - xpkg.upbound.io/upbound/function-go-templating
 
   provider:
     packages:
-      - xpkg.upbound.io/upbound/provider-family-aws:v1.20.0
+      - xpkg.upbound.io/upbound/provider-family-aws
       - xpkg.upbound.io/upbound/provider-aws-s3
