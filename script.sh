@@ -188,9 +188,10 @@ echo "----------------------------------------------------"
 
 
 echo "open https://argocd.local or http://argo-workflows.local or http://argo-rollouts.local"
-echo "Or once Kargo is synced in argocd http://kargo.local"
+echo "Or once Kargo is synced through argocd http://kargo.local" with password kargo
 
 
 echo "Retrieving Argo CD admin password..."
+echo "username: admin"
 get_argocd_admin_password
 
