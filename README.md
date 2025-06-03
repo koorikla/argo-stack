@@ -17,6 +17,9 @@ sudo ./script.sh
 
 4. Commit any manifest to ./manifests folder and sync the app
 
+# Argo workflows
+
+Sync workflow-components ArgoCD application for a demo or create them through gui or commit to manifests folder
 
 # Crossplane
 
