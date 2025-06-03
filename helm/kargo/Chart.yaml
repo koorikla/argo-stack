@@ -6,6 +6,3 @@ dependencies:
   - name: kargo
     version: "1.*.*"
     repository: "oci://ghcr.io/akuity/kargo-charts"
-  - name: cert-manager
-    version: "1.*.*"
-    repository: "https://charts.jetstack.io"
