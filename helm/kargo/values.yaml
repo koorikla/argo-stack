@@ -1,6 +1,8 @@
 kargo:
   api:
     host: kargo.local
+    tls:
+      enabled: false
     ingress:
       enabled: true
       ingressClassName: nginx
