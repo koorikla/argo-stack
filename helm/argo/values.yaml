@@ -25,6 +25,10 @@ argocd-apps:
         repoURL: https://charts.jetstack.io
         targetRevision: 1.*.*
         chart: cert-manager
+        helm:
+          parameters:
+            - name: crds.enabled
+              value: 'true'
       destination:
         server: https://kubernetes.default.svc
         namespace: kube-system
