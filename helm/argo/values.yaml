@@ -18,6 +18,25 @@ argocd-apps:
           prune: true
           selfHeal: true
 
+    cert-manager:
+      namespace: argo
+      project: infra
+      source:
+        repoURL: https://charts.jetstack.io
+        targetRevision: 1.*.*
+        chart: cert-manager
+        helm:
+          parameters:
+            - name: crds.enabled
+              value: 'true'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: kube-system
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+
     crossplane:
       namespace: argo
       project: infra
