@@ -14,3 +14,5 @@ brew install helm kind kubectl
 chmod +x script.sh
 sudo ./script.sh
 ```
+
+4. Commit any manifest to ./manifests folder and sync the app

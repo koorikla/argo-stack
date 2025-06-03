@@ -31,6 +31,19 @@ argocd-apps:
         server: https://kubernetes.default.svc
         namespace: argo
 
+    any-manifest:
+      namespace: argo
+      project: demo
+      sources:
+      - repoURL: https://github.com/koorikla/argo-stack
+        path: manifests
+        targetRevision: main
+        directory:
+          recurse: true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+
     rollout-demo:
       namespace: argo
       project: demo
