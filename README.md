@@ -16,3 +16,17 @@ sudo ./script.sh
 ```
 
 4. Commit any manifest to ./manifests folder and sync the app
+
+
+# Crossplane
+
+1. create ./aws-credentials.txt
+```
+[default]  
+aws_access_key_id = EXAMPLEACCESSKEY  
+aws_secret_access_key = EXAMPLESECRET
+```
+2. Create secret out of the credentials
+`kubectl create secret generic aws-secret --from-file=creds=./aws-credentials.txt`
+3. Sync Crossplane app in ArgoCD
+4. Create example manifest (for instance comment out bucket object in manifests/random-manigest.yaml)
