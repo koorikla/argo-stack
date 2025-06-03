@@ -27,6 +27,6 @@ aws_access_key_id = EXAMPLEACCESSKEY
 aws_secret_access_key = EXAMPLESECRET
 ```
 2. Create secret out of the credentials
-`kubectl create secret generic aws-secret --from-file=creds=./aws-credentials.txt`
+`kubectl create secret generic aws-secret --from-file=creds=./aws-credentials.txt -n crossplane-system`
 3. Sync Crossplane app in ArgoCD
 4. Create example manifest (for instance comment out bucket object in manifests/random-manifest.yaml)
