@@ -1,0 +1,11 @@
+kargo:
+  api:
+    host: kargo.local
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+    adminAccount:
+      # Admin account password: kargo
+      enabled: true
+      passwordHash: "$2y$10$hJX0VTPFzOKx4VSTOM7hIuDnwcZerpo0G8MfXll4D9gE7YbMA1Xbq"
+      tokenSigningKey: "jvx7dfuPg6phK1dcd45oaKR0oVKlT5YE"
