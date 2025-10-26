@@ -5,7 +5,17 @@
 
 version: 2
 updates:
-  - package-ecosystem: "helm" # See documentation for possible values
-    directory: "/helm" # Location of package manifests
+  - package-ecosystem: "helm"
+    directory: "/helm/argo"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "helm"
+    directory: "/helm/crossplane"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "helm"
+    directory: "/helm/kargo"
     schedule:
       interval: "weekly"
