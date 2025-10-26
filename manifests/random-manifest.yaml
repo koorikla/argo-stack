@@ -26,12 +26,13 @@
 
 # ---
 
-# apiVersion: s3.aws.upbound.io/v1beta1
+# apiVersion: s3.aws.m.upbound.io/v1beta1
 # kind: Bucket
 # metadata:
 #   labels:
 #     testing.upbound.io/example-name: crossplane-bucket
 #   name: demo-crossplane-bucket
+#   namespace: default
 # spec:
 #   forProvider:
 #     region: eu-central-1
