@@ -4,5 +4,5 @@ description: A Helm chart to deploy crossplane-core
 version: 0.1.0
 dependencies:
   - name: crossplane
-    version: "1.*.*"
+    version: "2.*.*"
     repository: "https://charts.crossplane.io/stable"
