@@ -10,31 +10,111 @@ help: ## Display this help.
 ##@ Development
 
 .PHONY: up
-up: ## Create Kind cluster and install Argo stack.
-	@echo "Creating cluster and installing stack with Repo URL: $(REPO_URL)"
-	@./script.sh "$(REPO_URL)"
+up: ## Create cluster and install everything.
+	@$(MAKE) create-cluster
+	@$(MAKE) init
+	@$(MAKE) install
+	@$(MAKE) password
+	@$(MAKE) hosts
+	@echo "----------------------------------------------------"
+	@echo "Setup complete!"
+	@echo "Access ArgoCD: https://argocd.local"
+	@echo "Access Workflows: http://argo-workflows.local"
+	@echo "Access Rollouts: http://argo-rollouts.local"
+	@echo "Access Kargo: http://kargo.local (password: kargo)"
+	@echo "----------------------------------------------------"
+
+.PHONY: create-cluster
+create-cluster: ## Create Kind cluster.
+	@if kind get clusters | grep -q "^$(CLUSTER_NAME)$$"; then \
+		echo "Cluster $(CLUSTER_NAME) already exists."; \
+	else \
+		echo "Creating Kind cluster..."; \
+		printf '%s\n' \
+			'kind: Cluster' \
+			'apiVersion: kind.x-k8s.io/v1alpha4' \
+			'nodes:' \
+			'- role: control-plane' \
+			'- role: worker' \
+			'- role: worker' \
+			| kind create cluster --config=-; \
+		echo "Waiting for nodes..."; \
+		kubectl wait --for=condition=Ready nodes --all --timeout=300s; \
+	fi
+
+.PHONY: init
+init: ## Initialize Helm repos and dependencies.
+	@echo "Initializing..."
+	@helm repo add argo https://argoproj.github.io/argo-helm
+	@helm repo update
+
+.PHONY: hosts
+hosts: ## Update /etc/hosts with LoadBalancer IP.
+	@echo "Getting Ingress IP..."
+	@# Wait for Argo CD Ingress to have an IP
+	@echo "Waiting for Argo CD Ingress IP..."
+	@kubectl wait --namespace argo \
+		--for=jsonpath='{.status.loadBalancer.ingress[0].ip}' ingress/argo-cd-server \
+		--timeout=300s
+	@IP=$$(kubectl get ingress argo-cd-server -n argo -o jsonpath='{.status.loadBalancer.ingress[0].ip}'); \
+	if [ -z "$$IP" ]; then \
+		echo "Error: Could not get Ingress IP. Is cloud-provider-kind running?"; \
+		exit 1; \
+	else \
+		echo "Ingress IP: $$IP"; \
+		echo "Updating /etc/hosts (requires sudo)..."; \
+		for domain in argocd.local argo-workflows.local argo-rollouts.local kargo.local; do \
+			echo "Updating $$domain to $$IP..."; \
+			sudo sed -i '' "/[[:space:]]$$domain$$/d" /etc/hosts; \
+			echo "$$IP $$domain" | sudo tee -a /etc/hosts; \
+		done \
+	fi
+
+.PHONY: install
+install: ## Install Argo stack.
+	@echo "Installing Argo Stack..."
+	@helm dependency update helm/argo
+	@# First install without apps to get CRDs
+	@helm upgrade --install argo helm/argo -n argo \
+		--set argocd-apps.enabled=false \
+		--create-namespace --wait
+	@echo "Installing Argo Apps..."
+	@# Generate temp values with dynamic repo URL
+	@cp helm/argo/values.yaml helm/argo/values.temp.yaml
+	@sed -i '' "s|https://github.com/koorikla/argo-stack|$(REPO_URL)|g" helm/argo/values.temp.yaml
+	@helm upgrade --install argo helm/argo -n argo \
+		--set argocd-apps.enabled=true \
+		--values helm/argo/values.temp.yaml \
+		--wait
+	@rm helm/argo/values.temp.yaml
+
+.PHONY: password
+password: ## Retrieve Argo CD admin password.
+	@echo "Waiting for Argo CD admin secret..."
+	@kubectl -n argo wait --for=condition=available deployment/argo-cd-server --timeout=300s
+	@echo "Argo CD Admin Password:"
+	@kubectl -n argo get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo ""
 
 .PHONY: down
 down: ## Delete the Kind cluster.
 	@kind delete cluster --name $(CLUSTER_NAME)
 
 .PHONY: lint
-lint: ## Run linters on scripts and Helm charts.
-	@echo "Linting scripts..."
-	@docker run --rm -v "$$(pwd):/mnt" koalaman/shellcheck:stable script.sh
+lint: ## Run linters on Helm charts.
 	@echo "Linting Helm charts..."
 	@helm lint helm/argo helm/crossplane helm/kargo
 
+##@ Utils
+
 .PHONY: dev
 dev: ## Setup development environment (pre-commit).
+	@pip3 install pre-commit
 	@pre-commit install
 
 .PHONY: check
 check: ## Run pre-commit hooks on all files.
 	@pre-commit run --all-files
 
-##@ Utils
-
 .PHONY: clean
 clean: ## Remove temp files.
-	@rm -f aws-credentials.txt
+	@rm -f aws-credentials.txt helm/argo/values.temp.yaml

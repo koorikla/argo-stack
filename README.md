@@ -4,28 +4,39 @@ This repository contains a local development stack with Argo (CD, Workflows, Eve
 
 ## Prerequisites
 
-- [Docker](https://www.docker.com/) or Podman
-- [Kind](https://kind.sigs.k8s.io/)
-- [cloud-provider-kind](https://github.com/kubernetes-sigs/cloud-provider-kind)
-- [Helm](https://helm.sh/)
-- [Kubectl](https://kubernetes.io/docs/tasks/tools/)
-- [Make](https://www.gnu.org/software/make/) (optional, but recommended)
+Install the required tools on macOS using Homebrew:
+
+```bash
+brew install --cask docker
+brew install kind helm kubectl
+```
+
+For `cloud-provider-kind`:
+```bash
+brew install cloud-provider-kind
+```
+*Alternatively, you can install via Go:*
+```bash
+go install sigs.k8s.io/cloud-provider-kind@latest
+```
 
 ## Usage
 
 ### Quick Start
 
-To spin up the local cluster and install the stack:
+1. Start `cloud-provider-kind` in a separate terminal:
+   ```bash
+   cloud-provider-kind
+   ```
+2. Spin up the stack:
+   ```bash
+   make up
+   ```
 
-```bash
-make up
-```
-
-This command will:
+This will:
 1. Create a Kind cluster.
-2. Install Nginx Ingress.
-3. Deploy the Argo stack using the current git repository URL.
-4. Update `/etc/hosts` (requires sudo) for local ingress access.
+2. Install the Argo stack (Argo CD, Workflows, Events, Rollouts, Kargo, Crossplane).
+3. Retrieve the initial admin password.
 
 ### Clean Up
 
@@ -35,37 +46,17 @@ To destroy the cluster:
 make down
 ```
 
-## Manual Usage (without Make)
-
-If you prefer to run the script directly:
-
-```bash
-chmod +x script.sh
-./script.sh "https://github.com/your-repo/argo-stack"
-```
-
-The script accepts an optional argument for the repository URL. If not provided, it defaults to `https://github.com/koorikla/argo-stack`.
-
 ## Access Points
 
-- **Argo CD**: https://argocd.local (User: `admin`, Password: see script output)
+*Note: The `make up` command will automatically prompt to update your `/etc/hosts` to point these domains to the correct LoadBalancer IP.*
+
+- **Argo CD**: https://argocd.local (User: `admin`, Password: see output)
 - **Argo Workflows**: http://argo-workflows.local
 - **Argo Rollouts**: http://argo-rollouts.local
 - **Kargo**: http://kargo.local
 
-## Components
-
-- **Argo CD**: GitOps continuous delivery.
-- **Argo Workflows**: Workflow engine.
-- **Argo Events**: Event-driven workflow automation.
-- **Argo Rollouts**: Advanced deployment strategies.
-- **Crossplane**: Infrastructure as Code.
-- **Kargo**: Application lifecycle management.
-
 ## Development
 
-Lint scripts and charts:
-
-```bash
-make lint
-```
+- **Lint scripts and charts**: `make lint`
+- **Install pre-commit hooks**: `make dev`
+- **Run all checks**: `make check`
