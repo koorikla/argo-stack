@@ -1,45 +1,71 @@
-# Local Argo stack, Crossplane and Kargo sandbox in Kind
+# Local Argo stack
 
-1. Fork repo
-2. Change all 'https://github.com/koorikla/argo-stack' for your repo in `helm/argo/values.yaml`
-   1. `sed -i '' 's|https://github.com/koorikla/argo-stack|https://github.com/yourRepo/argo-stack|g' helm/argo/values.yaml`
+This repository contains a local development stack with Argo (CD, Workflows, Events, Rollouts), Crossplane, and Kargo running in a Kind cluster.
 
-3. Run the script while docker / podman is running to spin up your local cluster and add Argo stack to it
- 
-# OSX
+## Prerequisites
+
+- [Docker](https://www.docker.com/) or Podman
+- [Kind](https://kind.sigs.k8s.io/)
+- [cloud-provider-kind](https://github.com/kubernetes-sigs/cloud-provider-kind)
+- [Helm](https://helm.sh/)
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Make](https://www.gnu.org/software/make/) (optional, but recommended)
+
+## Usage
+
+### Quick Start
+
+To spin up the local cluster and install the stack:
+
 ```bash
-brew install --cask docker
-open -a Docker
-brew install helm kind kubectl
+make up
+```
+
+This command will:
+1. Create a Kind cluster.
+2. Install Nginx Ingress.
+3. Deploy the Argo stack using the current git repository URL.
+4. Update `/etc/hosts` (requires sudo) for local ingress access.
+
+### Clean Up
+
+To destroy the cluster:
+
+```bash
+make down
+```
+
+## Manual Usage (without Make)
+
+If you prefer to run the script directly:
+
+```bash
 chmod +x script.sh
-sudo ./script.sh
+./script.sh "https://github.com/your-repo/argo-stack"
 ```
 
-4. Commit any manifest to ./manifests folder and sync the app
+The script accepts an optional argument for the repository URL. If not provided, it defaults to `https://github.com/koorikla/argo-stack`.
 
-# Argo workflows
+## Access Points
 
-Sync workflow-components ArgoCD application for a demo or create them through gui or commit to manifests folder
+- **Argo CD**: https://argocd.local (User: `admin`, Password: see script output)
+- **Argo Workflows**: http://argo-workflows.local
+- **Argo Rollouts**: http://argo-rollouts.local
+- **Kargo**: http://kargo.local
 
-# Crossplane
+## Components
 
-1. Create ./aws-credentials.txt
+- **Argo CD**: GitOps continuous delivery.
+- **Argo Workflows**: Workflow engine.
+- **Argo Events**: Event-driven workflow automation.
+- **Argo Rollouts**: Advanced deployment strategies.
+- **Crossplane**: Infrastructure as Code.
+- **Kargo**: Application lifecycle management.
+
+## Development
+
+Lint scripts and charts:
+
+```bash
+make lint
 ```
-[default]  
-aws_access_key_id = EXAMPLEACCESSKEY  
-aws_secret_access_key = EXAMPLESECRET
-```
-2. Create secret out of the credentials
-`kubectl create secret generic aws-secret --from-file=creds=./aws-credentials.txt -n crossplane-system`
-3. Sync Crossplane app in ArgoCD
-4. Create example manifest (for instance comment out bucket object in manifests/random-manifest.yaml)
-
-# Kargo
-1. Sync kargo application in ArgoCD
-2. Create project or any object in Kargo GUI
-3. Create a gitlab/github token and add it through GUI (or a k8s secret)
-4. To import your Kargo components created through GUI to GitOps use kubectl ala
-   1. `kubectl get projects kargo-demo -o yaml`
-   2. `kubectl get stages kargo-demo -o yaml`
-   3. ...
-5. Commit to manifests folder
