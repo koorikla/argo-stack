@@ -137,7 +137,7 @@ argo-cd:
   enabled: true
   fullnameOverride: argo-cd
   global:
-    domain: argocd.local  
+    domain: argocd.local
   server:
     ingress:
       enabled: true

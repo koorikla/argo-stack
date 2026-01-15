@@ -23,4 +23,8 @@ jobs:
           version: v3.11.1
 
       - name: Lint Helm Charts
-        run: helm lint helm/argo helm/crossplane helm/kargo
+        run: |
+          helm dependency update helm/argo
+          helm dependency update helm/crossplane
+          helm dependency update helm/kargo
+          helm lint helm/argo helm/crossplane helm/kargo

@@ -25,6 +25,14 @@ lint: ## Run linters on scripts and Helm charts.
 	@echo "Linting Helm charts..."
 	@helm lint helm/argo helm/crossplane helm/kargo
 
+.PHONY: dev
+dev: ## Setup development environment (pre-commit).
+	@pre-commit install
+
+.PHONY: check
+check: ## Run pre-commit hooks on all files.
+	@pre-commit run --all-files
+
 ##@ Utils
 
 .PHONY: clean
