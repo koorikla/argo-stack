@@ -11,6 +11,7 @@ help: ## Display this help.
 
 .PHONY: up
 up: ## Create cluster and install everything.
+	@$(MAKE) cloud-provider
 	@$(MAKE) create-cluster
 	@$(MAKE) init
 	@$(MAKE) install
@@ -41,6 +42,17 @@ create-cluster: ## Create Kind cluster.
 		echo "Waiting for nodes..."; \
 		kubectl wait --for=condition=Ready nodes --all --timeout=300s; \
 	fi
+
+.PHONY: cloud-provider
+cloud-provider: ## Start cloud-provider-kind in a new terminal.
+	@echo "Checking cloud-provider-kind..."
+	@if pgrep -f cloud-provider-kind > /dev/null; then \
+		echo "Killing existing cloud-provider-kind..."; \
+		sudo pkill -f cloud-provider-kind || true; \
+	fi
+	@echo "Starting cloud-provider-kind in a new Terminal window..."
+	@osascript -e 'tell app "Terminal" to do script "echo Starting cloud-provider-kind...; sudo cloud-provider-kind"'; \
+	osascript -e 'tell app "Terminal" to activate'
 
 .PHONY: init
 init: ## Initialize Helm repos and dependencies.

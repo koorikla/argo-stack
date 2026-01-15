@@ -139,10 +139,12 @@ argo-cd:
   global:
     domain: argocd.local
   server:
+    extraArgs:
+      - --insecure
     ingress:
       enabled: true
       annotations:
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
         # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       # ingressClassName: "nginx"
       https: false
