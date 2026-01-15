@@ -149,8 +149,7 @@ argo-cd:
       annotations:
         nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
         nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      # ingressClassName: "nginx"
-      https: false
+      ingressClassName: "nginx"
 
 
 argo-workflows:
@@ -165,7 +164,7 @@ argo-workflows:
       annotations:
         nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
         nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-      # ingressClassName: "nginx"
+      ingressClassName: "nginx"
       hosts:
         - argo-workflows.local
 
@@ -182,7 +181,7 @@ argo-rollouts:
     enabled: true
     ingress:
       enabled: true
-      # ingressClassName: "nginx"
+      ingressClassName: "nginx"
       hosts:
         - argo-rollouts.local
       pathType: ImplementationSpecific
