@@ -143,45 +143,13 @@ argo-cd:
     params:
       server.insecure: true
 
-
   server:
-    httproute:
+    ingress:
       enabled: true
-      parentRefs:
-        - name: external
-          namespace: argo
-          sectionName: https
-  # server:
-  #   ingress:
-  #     enabled: false
-    # Experimental Gateway API support
-    # See https://artifacthub.io/packages/helm/argo/argo-cd#gateway-api
-    # This requires the Gateway API CRDs to be installed on the cluster
-    # and a Gateway resource to be created.
-    # We are creating the Gateway in manifests/gateway.yaml
-    # and applying it in the Makefile init step.
-    # Note: `server.httproute` configuration structure depends on chart version.
-    # Assuming modern chart structure based on typical Gateway API implementations.
-    # If the chart doesn't support httproute block directly, we might need a raw manifest.
-    # Checking values structure... standard charts usually look like this:
-    # (Actually, let's verify if `server.httproute` exists in the chart values default?
-    # User mentioned "argocd chart supports Gateway API HTTPRoute".
-    # I will try the common params).
-    #
-    # Wait, simple way: disable ingress here and use `configs.params`... NO.
-    # The chart usually has `server.httpRoute` block.
-    # Let's try:
-    #
-    # server:
-    #   httpRoute:
-    #     enabled: true
-    #     parentRefs:
-    #     - name: external
-    #       namespace: argo
-    #     hostnames:
-    #     - argocd.local
-    #
-
+      annotations:
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      ingressClassName: "nginx"
 
 
 argo-workflows:
