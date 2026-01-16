@@ -143,13 +143,15 @@ argo-cd:
     params:
       server.insecure: true
 
+
   server:
-    ingress:
+    httproute:
       enabled: true
-      annotations:
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      ingressClassName: "nginx"
+      parentRefs:
+        - name: external
+          namespace: argo
+      hostnames:
+      - argocd.local
 
 
 argo-workflows:
@@ -159,13 +161,12 @@ argo-workflows:
   server:
     extraArgs:
     - --auth-mode=server
-    ingress:
+    httproute:
       enabled: true
-      annotations:
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-        nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-      ingressClassName: "nginx"
-      hosts:
+      parentRefs:
+        - name: external
+          namespace: argo
+      hostnames:
         - argo-workflows.local
 
 
@@ -179,11 +180,24 @@ argo-rollouts:
   fullnameOverride: argo-rollouts
   dashboard:
     enabled: true
-    ingress:
-      enabled: true
-      ingressClassName: "nginx"
-      hosts:
+  extraObjects:
+    - apiVersion: gateway.networking.k8s.io/v1
+      kind: GRPCRoute
+      metadata:
+        name: argo-rollouts-dashboard
+        namespace: argo
+      spec:
+        parentRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: external
+          namespace: argo
+        hostnames:
         - argo-rollouts.local
-      pathType: ImplementationSpecific
-      paths:
-        - /
+        rules:
+        - backendRefs:
+          - group: ""
+            kind: Service
+            name: argo-rollouts-dashboard
+            port: 3100
+            weight: 1

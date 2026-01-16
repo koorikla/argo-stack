@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: kargo
+  namespace: kargo
+spec:
+  parentRefs:
+  - name: external
+    namespace: argo
+  hostnames:
+  - kargo.local
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: kargo-api
+      port: 80
