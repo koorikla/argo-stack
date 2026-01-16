@@ -15,7 +15,6 @@ up: ## Create cluster and install everything.
 	@$(MAKE) create-cluster
 	@$(MAKE) init
 	@$(MAKE) install
-	@$(MAKE) password
 	@$(MAKE) hosts
 	@echo "----------------------------------------------------"
 	@echo "Setup complete!"
@@ -24,6 +23,7 @@ up: ## Create cluster and install everything.
 	@echo "Access Rollouts: http://argo-rollouts.local"
 	@echo "Access Kargo: http://kargo.local (password: kargo)"
 	@echo "----------------------------------------------------"
+	@$(MAKE) password
 
 .PHONY: create-cluster
 create-cluster: ## Create Kind cluster.
@@ -57,29 +57,28 @@ cloud-provider: ## Start cloud-provider-kind in a new terminal.
 .PHONY: init
 init: ## Initialize Helm repos and dependencies.
 	@echo "Initializing..."
-	@echo "Installing Nginx Ingress Controller..."
-	@kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
-	@echo "Waiting for Ingress Nginx..."
-	@kubectl wait --namespace ingress-nginx \
-		--for=condition=ready pod \
-		--selector=app.kubernetes.io/component=controller \
+	@kubectl create namespace argo --dry-run=client -o yaml | kubectl apply -f -
+	@echo "Installing Gateway API CRDs..."
+	@kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/standard-install.yaml
+	@echo "Applying Gateway API configuration..."
+	@kubectl apply -f manifests/gateway.yaml
+	@echo "Waiting for Gateway..."
+	@kubectl wait --namespace argo \
+		--for=condition=Accepted gateway/external \
 		--timeout=300s
-	@echo "Patching Nginx Ingress Service to LoadBalancer for cloud-provider-kind..."
-	@kubectl patch svc ingress-nginx-controller -n ingress-nginx -p '{"spec": {"type": "LoadBalancer"}}'
 	@helm repo add argo https://argoproj.github.io/argo-helm
 	@helm repo update
 
 .PHONY: hosts
 hosts: ## Update /etc/hosts with LoadBalancer IP.
-	@echo "Getting Ingress IP..."
-	@# Wait for Nginx Ingress to have an IP
-	@echo "Waiting for Nginx Ingress IP..."
-	@kubectl wait --namespace ingress-nginx \
-		--for=jsonpath='{.status.loadBalancer.ingress[0].ip}' svc/ingress-nginx-controller \
-		--timeout=300s
-	@IP=$$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'); \
+	@echo "Getting Gateway IP..."
+	@# Wait for Gateway to have an IP
+	@echo "Waiting for Gateway IP..."
+	@# Note: Gateway might take a moment to be assigned an address by cloud-provider-kind
+	@sleep 5
+	@IP=$$(kubectl get gateway external -n argo -o jsonpath='{.status.addresses[0].value}'); \
 	if [ -z "$$IP" ]; then \
-		echo "Error: Could not get Ingress IP. Is cloud-provider-kind running?"; \
+		echo "Error: Could not get Gateway IP. Is cloud-provider-kind running?"; \
 		exit 1; \
 	else \
 		echo "Ingress IP: $$IP"; \
